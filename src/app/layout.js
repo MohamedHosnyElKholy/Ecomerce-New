@@ -1,11 +1,16 @@
 import localFont from "next/font/local";
 import "./globals.css";
+import Nav from "./_components/Nav/Nav.jsx";
+import ReduxProvider from "./feature/ReduxProvider";
+import Footer from "./_components/Footer/Footer";
 
+// تحميل الخطوط المحلية
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
   variable: "--font-geist-sans",
   weight: "100 900",
 });
+
 const geistMono = localFont({
   src: "./fonts/GeistMonoVF.woff",
   variable: "--font-geist-mono",
@@ -20,10 +25,17 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
+      <head>
+        {/* يمكنك إضافة meta tags هنا إذا لزم الأمر */}
+      </head>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased bg-gradient-to-r from-gray-900 to-black min-h-screen text-white`}
       >
-        {children}
+        <ReduxProvider>
+          <Nav />
+          <main>{children}</main> {/* إضافة العنصر main لتحسين الهيكل */}
+          <Footer/>
+        </ReduxProvider>
       </body>
     </html>
   );

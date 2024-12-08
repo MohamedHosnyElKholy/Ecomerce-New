@@ -1,3 +1,5 @@
+@import "slick-carousel/slick/slick.css";
+@import "slick-carousel/slick/slick-theme.css";
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -18,4 +20,12 @@ body {
   color: var(--foreground);
   background: var(--background);
   font-family: Arial, Helvetica, sans-serif;
+}
+.slick-prev, .slick-next {
+  display: none !important;
+}
+
+.slick-dots li button:before{
+  color: #fff;
+  font-size: 10px;
 }
