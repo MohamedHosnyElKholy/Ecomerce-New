@@ -29,3 +29,7 @@ body {
   color: #fff;
   font-size: 10px;
 }
+
+body > nav > div > div > ul{
+  align-items: center;
+}

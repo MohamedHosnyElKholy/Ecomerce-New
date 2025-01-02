@@ -1,18 +1,11 @@
-
-import React from 'react'
-import Header from './_components/Header/Header'
-import Pouprple from './_components/Pourple/Pouprple'
-import RatedMovie from './_components/RatedMovie/RatedMovie'
-import UpcomingMovie from './_components/UpcomingMovie/UpcomingMovie'
-import NowMovie from './_components/NowMovies/NowMovies'
+import React from "react";
+import Headers from "../app/(page)/Headers/page";
+import Products from "./_components/Products/page";
 export default function page() {
   return (
     <>
-    <Header/>
-    <Pouprple/>
-    <RatedMovie/>
-    <UpcomingMovie/>
-    <NowMovie/>
+      <Headers />
+      <Products />
     </>
-  )
+  );
 }

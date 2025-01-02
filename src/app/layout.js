@@ -3,6 +3,7 @@ import "./globals.css";
 import Nav from "./_components/Nav/Nav.jsx";
 import ReduxProvider from "./feature/ReduxProvider";
 import Footer from "./_components/Footer/Footer";
+import { Toaster } from "react-hot-toast";
 
 // تحميل الخطوط المحلية
 const geistSans = localFont({
@@ -25,16 +26,16 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
-      <head>
-        {/* يمكنك إضافة meta tags هنا إذا لزم الأمر */}
-      </head>
+      <head>{/* يمكنك إضافة meta tags هنا إذا لزم الأمر */}</head>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased bg-gradient-to-r from-gray-900 to-black min-h-screen text-white`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased bg-gradient-to-r from-gray-900 to-black min-h-screen text-white flex flex-col justify-between`}
       >
         <ReduxProvider>
           <Nav />
-          <main>{children}</main> {/* إضافة العنصر main لتحسين الهيكل */}
-          <Footer/>
+          <main className="flex-grow">{children}</main>{" "}
+          {/* إضافة flex-grow لتوسيع main */}
+          <Footer />
+          <Toaster />
         </ReduxProvider>
       </body>
     </html>
