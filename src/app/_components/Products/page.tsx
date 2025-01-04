@@ -9,6 +9,7 @@ import toast from "react-hot-toast";
 
 // استيراد أيقونة القلب من React Icons
 import { FaHeart } from "react-icons/fa";
+import { addWishlist } from "../../lib/wishlistSlice";
 
 // تعريف نوع المنتج (Product)
 interface Category {
@@ -58,7 +59,7 @@ export default function Page() {
 
   const handleWishList = async (id: number) => {
     try {
-      const response = await dispatch(addCart(id)).unwrap();
+      const response = await dispatch(addWishlist(id)).unwrap();
       console.log("Response:", response);
       toast.success(response.message);
     } catch (error) {
@@ -130,7 +131,7 @@ export default function Page() {
                     Add to Cart
                   </button>
                   <button
-                    onClick={() => {/* Handle Add to Wishlist Logic */}}
+                    onClick={() => handleWishList(product.id)}
                     className="w-full block text-center py-2 px-6 bg-pink-600 text-white rounded-lg hover:bg-pink-700 focus:outline-none focus:ring-2 focus:ring-pink-500 transition-all duration-300 mt-2"
                   >
                     <FaHeart className="inline-block mr-2 text-lg" />

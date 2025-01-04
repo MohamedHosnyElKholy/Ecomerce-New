@@ -3,45 +3,42 @@ import axios from "axios";
 
 // تعريف نوع بيانات المنتج
 interface ProductDetails {
-  id: number; // معرف المنتج
-  title: string; // عنوان المنتج
-  price: number; // سعر المنتج
-  imageCover: string; // رابط صورة الغلاف للمنتج
-  description: string; // وصف المنتج
-  ratingsAverage: number; // التقييم المتوسط للمنتج
-  count: number; // عدد المنتج في السلة
+  id: number;
+  title: string;
+  price: number;
+  imageCover: string;
+  description: string;
+  ratingsAverage: number;
+  count: number;
   product: {
-    id: number; // معرف المنتج
-    title: string; // عنوان المنتج
+    id: number;
+    title: string;
     category: {
-      name: string; // اسم الفئة
+      name: string;
     };
     brand: {
-      name: string; // اسم العلامة التجارية
+      name: string;
     };
-    imageCover: string; // صورة غلاف المنتج
-  }; // تفاصيل المنتج
+    imageCover: string;
+  };
 }
 
 // تعريف حالة القائمة المفضلة
 interface WishlistState {
-  items: ProductDetails[]; // قائمة المنتجات المفضلة
+  items: ProductDetails[];
   loading: boolean;
   error: string | null;
-  numOfWishlistItems: number; // عدد العناصر في القائمة المفضلة
 }
 
 // ** دالة لإضافة منتج إلى القائمة المفضلة عبر API **
 export const addWishlist = createAsyncThunk<
-  { message: string; numOfWishlistItems: number }, // نوع البيانات التي سترجعها الدالة
-  string, // نوع البيانات المدخلة (id المنتج)
-  { rejectValue: string } // نوع قيمة الرفض
+  ProductDetails[],
+  string,
+  { rejectValue: string }
 >("wishlist/addWishlist", async (id, thunkAPI) => {
   try {
     const token = localStorage.getItem("token");
-    if (!token) {
-      return thunkAPI.rejectWithValue("Token is missing.");
-    }
+    if (!token) return thunkAPI.rejectWithValue("Token is missing.");
 
     const response = await axios.post(
       "https://ecommerce.routemisr.com/api/v1/wishlist",
@@ -53,13 +50,64 @@ export const addWishlist = createAsyncThunk<
       }
     );
 
-    return {
-      message: response.data.message,
-      numOfWishlistItems: response.data.numOfWishlistItems,
-    };
+    return response.data.products;
   } catch (error: any) {
     return thunkAPI.rejectWithValue(
       error.response?.data?.message || "Failed to add product to wishlist"
+    );
+  }
+});
+
+// ** دالة لجلب قائمة المفضلة من API **
+export const loggedWishList = createAsyncThunk<
+  ProductDetails[],
+  void,
+  { rejectValue: string }
+>("wishlist/loggedWishList", async (_, thunkAPI) => {
+  try {
+    const token = localStorage.getItem("token");
+    if (!token) return thunkAPI.rejectWithValue("Token is missing.");
+
+    const response = await axios.get(
+      "https://ecommerce.routemisr.com/api/v1/wishlist",
+      {
+        headers: {
+          token,
+        },
+      }
+    );
+
+    return response.data;
+  } catch (error: any) {
+    return thunkAPI.rejectWithValue(
+      error.response?.data?.message || "Failed to fetch wishlist"
+    );
+  }
+});
+
+// ** دالة لحذف منتج من القائمة المفضلة **
+export const removeWishList = createAsyncThunk<
+  ProductDetails[],
+  string,
+  { rejectValue: string }
+>("wishlist/removeWishList", async (id, thunkAPI) => {
+  try {
+    const token = localStorage.getItem("token");
+    if (!token) return thunkAPI.rejectWithValue("Token is missing.");
+
+    const response = await axios.delete(
+      `https://ecommerce.routemisr.com/api/v1/wishlist/${id}`,
+      {
+        headers: {
+          token,
+        },
+      }
+    );
+
+    return response.data;
+  } catch (error: any) {
+    return thunkAPI.rejectWithValue(
+      error.response?.data?.message || "Failed to remove product from wishlist"
     );
   }
 });
@@ -71,29 +119,20 @@ const wishlistSlice = createSlice({
     items: [],
     loading: false,
     error: null,
-    numOfWishlistItems: 0, // تأكيد أن numOfWishlistItems يبدأ من 0
   } as WishlistState,
   reducers: {},
   extraReducers: (builder) => {
     builder
-      // ** معالج حالة الإضافة إلى القائمة المفضلة **
       .addCase(addWishlist.pending, (state) => {
         state.loading = true;
         state.error = null;
       })
       .addCase(
         addWishlist.fulfilled,
-        (
-          state,
-          action: PayloadAction<{ message: string; numOfWishlistItems: number }>
-        ) => {
+        (state, action: PayloadAction<ProductDetails[]>) => {
           state.loading = false;
           state.error = null;
-          state.numOfWishlistItems = action.payload.numOfWishlistItems;
-          localStorage.setItem(
-            "numOfWishlistItems",
-            String(state.numOfWishlistItems) // حفظ العدد في Local Storage
-          );
+          state.items = action.payload;
         }
       )
       .addCase(
@@ -101,6 +140,45 @@ const wishlistSlice = createSlice({
         (state, action: PayloadAction<string | undefined>) => {
           state.loading = false;
           state.error = action.payload || "Failed to add product to wishlist";
+        }
+      )
+      .addCase(loggedWishList.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(
+        loggedWishList.fulfilled,
+        (state, action: PayloadAction<ProductDetails[]>) => {
+          state.loading = false;
+          state.error = null;
+          state.items = action.payload;
+        }
+      )
+      .addCase(
+        loggedWishList.rejected,
+        (state, action: PayloadAction<string | undefined>) => {
+          state.loading = false;
+          state.error = action.payload || "Failed to fetch wishlist";
+        }
+      )
+      .addCase(removeWishList.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(
+        removeWishList.fulfilled,
+        (state, action: PayloadAction<ProductDetails[]>) => {
+          state.loading = false;
+          state.error = null;
+          state.items = action.payload;
+        }
+      )
+      .addCase(
+        removeWishList.rejected,
+        (state, action: PayloadAction<string | undefined>) => {
+          state.loading = false;
+          state.error =
+            action.payload || "Failed to remove product from wishlist";
         }
       );
   },

@@ -17,7 +17,6 @@ export default function Nav() {
 
   // استخراج عدد العناصر في السلة من Redux
   const numOfCartItems = useSelector((state) => state.cart.numOfCartItems);
-
   const [authoNav, setAuthoNav] = useState(false);
   const [loading, setLoading] = useState(true); // حالة التحميل
 
@@ -92,14 +91,6 @@ export default function Nav() {
               className="text-gray-900 dark:text-white hover:text-purple-600 dark:hover:text-purple-400"
             >
               Categories
-            </Navbar.Link>
-            <Navbar.Link
-              as={Link}
-              href="/subcategories"
-              active={pathname === "/subcategories"}
-              className="text-gray-900 dark:text-white hover:text-purple-600 dark:hover:text-purple-400"
-            >
-              SubCategories
             </Navbar.Link>
             <Navbar.Link
               as={Link}

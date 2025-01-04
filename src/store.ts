@@ -4,6 +4,8 @@ import productsReducer from "./app/lib/productsSlice"; // إضافة الـ prod
 import detailsReducer from "./app/lib/detialsSlice";
 import cartReducer from "./app/lib/cartSlice";
 import wishlistReducer from "./app/lib/wishlistSlice";
+import categoriesReducer from "./app/lib/catgorySlice";
+
 const store = configureStore({
   reducer: {
     login: loginReducer,
@@ -11,6 +13,7 @@ const store = configureStore({
     details: detailsReducer,
     cart: cartReducer,
     wishlist: wishlistReducer,
+    categories: categoriesReducer,
   },
 });
 
